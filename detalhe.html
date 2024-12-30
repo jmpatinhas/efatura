@@ -237,6 +237,44 @@
             pointer-events: none;
         }
 
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Certifique-se de que o overlay esteja acima de todos os outros elementos */
+        }
+
+        .popup {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            z-index: 1001; /* Certifique-se de que a popup esteja acima do overlay */
+        }
+
+        .popup button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup button.confirm {
+            background-color: #0073e6;
+            color: white;
+        }
+
+        .popup button.cancel {
+            background-color: #f5f5f5;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -250,7 +288,6 @@
             <div class="menu" id="menu">
                 <a href="index.html">Página Inicial</a>
                 <a href="faturas.html">Faturas</a>
-                <a href="#" onclick="showResetPopup()">Restabelecer Dados</a>
                 <a href="obrigado.html">Sair</a>
             </div>
         </div>
@@ -344,6 +381,21 @@
         </table>
     </div>
 
+    <div class="popup-overlay" id="error-popup">
+        <div class="popup">
+            <p id="error-message"></p>
+            <button class="confirm" onclick="hideErrorPopup()">OK</button>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="success-popup">
+        <div class="popup">
+            <img src="success.png" alt="Success" style="width: 50px; height: 50px;">
+            <p>Dados gravados com sucesso!</p>
+            <button class="confirm" onclick="hideSuccessPopup()">OK</button>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             carregarDetalhesFatura();
@@ -374,12 +426,12 @@
                         if (fatura) {
                             preencherDetalhes(fatura, editReceita);
                         } else {
-                            alert('Fatura não encontrada!');
+                            showErrorPopup('Fatura não encontrada!');
                         }
                     });
             } catch (error) {
                 console.error('Erro ao carregar as faturas:', error);
-                alert('Erro ao carregar os detalhes da fatura.');
+                showErrorPopup('Erro ao carregar os detalhes da fatura.');
             }
         }
 
@@ -506,7 +558,7 @@
             if (novaReceita === 'não') {
                 novoValorReceita = '0,00';
             } else if (!novoValorReceita) {
-                alert('Por favor, insira o valor da receita.');
+                showErrorPopup('Por favor, insira o valor da receita.');
                 return;
             }
 
@@ -536,13 +588,11 @@
                 urlParams.delete('editReceita');
                 const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
                 window.history.replaceState({}, '', newUrl);
-
-                // Faz o refresh da página
-                location.reload();
+                showSuccessPopup();
             })
             .catch((error) => {
                 console.error('Erro ao salvar a receita:', error);
-                alert(`Erro ao salvar a receita: ${error.message || error}. Por favor, tente novamente.`);
+                showErrorPopup(`Erro ao salvar a receita: ${error.message || error}. Por favor, tente novamente.`);
             });
         }
 
@@ -576,6 +626,24 @@
             valorReceitaField.classList.add('valor-receita-disabled');
             valorReceitaField.disabled = true;
         }
+    }
+
+    function showErrorPopup(message) {
+        document.getElementById('error-message').innerText = message;
+        document.getElementById('error-popup').style.display = 'flex';
+    }
+
+    function hideErrorPopup() {
+        document.getElementById('error-popup').style.display = 'none';
+    }
+
+    function showSuccessPopup() {
+        document.getElementById('success-popup').style.display = 'flex';
+    }
+
+    function hideSuccessPopup() {
+        document.getElementById('success-popup').style.display = 'none';
+        location.reload(); // Recarrega a página após fechar a popup de sucesso
     }
     </script>
 </body>
