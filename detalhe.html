@@ -359,7 +359,7 @@
             const editReceita = urlParams.get('editReceita') === 'true';
 
             try {
-                fetch('faturas.json') // Substitua pelo caminho correto
+                fetch('https://efatura.onrender.com/faturas')
                     .then(response => response.json())
                     .then(faturas => {
                         const fatura = faturas.find(f => f.numero === numeroFatura);
