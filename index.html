@@ -179,39 +179,49 @@
         }
 
         .progress-bar {
-            width: 100%;
-            background-color: #f2f2f2;
+            position: relative;
+            background-color: #f3f3f3;
             border-radius: 5px;
             overflow: hidden;
-            height: 20px;
+            padding: 5px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
         }
 
         .progress {
-            height: 100%;
-            text-align: center;
-            line-height: 20px;
-            color: white;
+            background-color: transparent;
+            color: #888;
+            z-index: 1;
+            padding-right: 10px;
+        }
+
+        .progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
             border-radius: 5px;
         }
 
-        .progress.health {
-            width: 20%;
-            background-color: #ff6b6b;
+        .progress.general .progress-fill {
+            background-color: #4CAF50;
+            width: 22.1%;
         }
 
-        .progress.education {
-            width: 40%;
-            background-color: #ffa500;
+        .progress.health .progress-fill {
+            background-color: #FF5722;
+            width: 2%;
         }
 
-        .progress.habitation {
-            width: 60%;
-            background-color: #32cd32;
+        .progress.education .progress-fill {
+            background-color: #FFEB3B;
+            width: 47.2%;
         }
 
-        .progress.general {
-            width: 80%;
-            background-color: #0073e6;
+        .progress.habitation .progress-fill {
+            background-color: #2196F3;
+            width: 25.5%;
         }
 
         .actions {
@@ -244,6 +254,7 @@
             display: none;
             justify-content: center;
             align-items: center;
+            z-index: 1000; /* Certifique-se de que o overlay esteja acima de todos os outros elementos */
         }
 
         .popup {
@@ -251,6 +262,7 @@
             padding: 20px;
             border-radius: 5px;
             text-align: center;
+            z-index: 1001; /* Certifique-se de que a popup esteja acima do overlay */
         }
 
         .popup button {
@@ -270,7 +282,24 @@
             background-color: #f5f5f5;
             color: black;
         }
+
+        .disabled {
+            background-color: gray !important;
+            color: white !important;
+            cursor: not-allowed !important;
+        }
+
+        .deduction-value {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: white;
+            border-radius: 5px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #0073e6;
+        }
     </style>
+
 </head>
 <body>
     <header>
@@ -281,7 +310,7 @@
         <div class="menu-container">
             <div id="menu-toggle" onclick="toggleMenu()">Menu ▼</div>
             <div class="menu" id="menu">
-                <a href="index.html">Página Inicial</a>
+                <a href="faturas.html">Consultar Faturas</a>
                 <a href="#" onclick="showResetPopup()">Restabelecer Dados</a>
                 <a href="obrigado.html">Sair</a>
             </div>
@@ -318,10 +347,11 @@
             <div class="year-navigation">
                 <button id="prevButton">◀</button>
                 <h2>2024</h2>
-                <button id="nextButton" disabled style="color: gray; cursor: not-allowed;">▶</button>
+                <button id="nextButton" class="disabled" disabled>▶</button>
             </div>
             <div class="deductions-info">
-                Deduções Provisórias em IRS: <span>1130,17€</span>
+                Deduções Provisórias em IRS: 
+                <span class="deduction-value">1130,17€</span>
             </div>
         </div>
 
@@ -340,25 +370,53 @@
                         <td>Despesas Gerais</td>
                         <td>3.023,42€</td>
                         <td>250,00€</td>
-                        <td><div class="progress-bar"><div class="progress general">80%</div></div></td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress general">
+                                    <div class="progress-fill"></div>
+                                    22.1%
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <td>Saúde</td>
                         <td>333,68€</td>
                         <td>43,39€</td>
-                        <td><div class="progress-bar"><div class="progress health">20%</div></div></td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress health">
+                                    <div class="progress-fill"></div>
+                                    0.1%
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <td>Educação</td>
                         <td>1.832,95€</td>
                         <td>533,55€</td>
-                        <td><div class="progress-bar"><div class="progress education">40%</div></div></td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress education">
+                                    <div class="progress-fill"></div>
+                                    47.2%
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <td>Habitação</td>
                         <td>4.013,24€</td>
                         <td>288,36€</td>
-                        <td><div class="progress-bar"><div class="progress habitation">60%</div></div></td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress habitation">
+                                    <div class="progress-fill"></div>
+                                    25.5%
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
