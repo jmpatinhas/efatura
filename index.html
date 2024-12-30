@@ -316,9 +316,9 @@
     <div class="container">
         <div class="header-content">
             <div class="year-navigation">
-                <button>◀</button>
+                <button id="prevButton">◀</button>
                 <h2>2024</h2>
-                <button>▶</button>
+                <button id="nextButton" disabled style="color: gray; cursor: not-allowed;">▶</button>
             </div>
             <div class="deductions-info">
                 Deduções Provisórias em IRS: <span>1130,17€</span>
@@ -362,6 +362,13 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <p>Não existem faturas anteriores a 2024 registadas no sistema.</p>
+            <button class="confirm" id="closePopup">OK</button>
         </div>
     </div>
 
@@ -579,6 +586,14 @@
     
     // Chama a função ao carregar a página
     verificarAvisos();
+
+    document.getElementById('prevButton').addEventListener('click', function() {
+        document.getElementById('popupOverlay').style.display = 'flex';
+    });
+
+    document.getElementById('closePopup').addEventListener('click', function() {
+        document.getElementById('popupOverlay').style.display = 'none';
+    });
 	</script>
 
 </body>
