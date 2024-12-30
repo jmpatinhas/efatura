@@ -520,7 +520,7 @@
 
     <div class="popup-overlay" id="success-popup">
         <div class="popup">
-            <p>Os dados foram resetados com sucesso!</p>
+            <p>Os dados foram restabelecidos com sucesso!</p>
             <button class="confirm" onclick="hideSuccessPopup()">OK</button>
         </div>
     </div>
@@ -1041,7 +1041,7 @@ function consultarFatura(numeroFatura) {
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Erro ao resetar os dados.');
+                    throw new Error('Erro ao restabelecer os dados.');
                 }
                 return response.json();
             })
@@ -1050,7 +1050,7 @@ function consultarFatura(numeroFatura) {
                 showSuccessPopup();
             })
             .catch(error => {
-                console.error('Erro ao resetar os dados:', error);
+                console.error('Erro ao restabelecer os dados:', error);
             });
         }
 
@@ -1087,6 +1087,12 @@ function clearFilters() {
 
     renderTable();
 }
+
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
     </script>
 </body>
 </html>

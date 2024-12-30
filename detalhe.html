@@ -555,9 +555,14 @@
 
 
         function voltar() {
-            // Redireciona para a página faturas.html e força o recarregamento
-            window.location.href = 'faturas.html';
+        const urlParams = new URLSearchParams(window.location.search);
+        const filtroSituacao = urlParams.get('filtroSituacao');
+        if (filtroSituacao) {
+            window.location.href = `faturas.html?filtroSituacao=${encodeURIComponent(filtroSituacao)}`;
+        } else {
+            window.history.back();
         }
+    }
     </script>
 </body>
 </html>
