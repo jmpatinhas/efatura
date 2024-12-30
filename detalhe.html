@@ -203,34 +203,6 @@
             box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
         }
 
-        .status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0 auto;
-        }
-
-        .status.registado {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status.pendente-classificacao {
-            background-color: #ffe5b4; /* Tom laranja claro */
-            color: #cc7a00; /* Laranja escuro */
-            border: 1px solid #ffaa00; /* Borda laranja */
-        }
-
-        .status.pendente-receita {
-            background-color: #cce5ff; /* Azul claro */
-            color: #004085; /* Azul escuro */
-            border: 1px solid #b8daff; /* Borda azul */
-        }
-
         .valor-receita-disabled {
             background-color: #f5f5f5;
             color: #aaa;
@@ -326,8 +298,7 @@
             </tr>
             <tr>
                 <th>Situação</th>
-                <td id="situacao" style="text-align: center;">
-                    <span id="situacao-status" class="status">Indefinido</span>
+                <td id="situacao">Indefinido</td>
                 </td>
             </tr>            
             
@@ -447,10 +418,6 @@
             document.getElementById('numero-certificado').innerText = fatura.numeroCertificado || 'NA';
             document.getElementById('regiao-imposto').innerText = fatura.regiaoImposto || 'NA';
             document.getElementById('situacao').innerText = fatura.situacao || 'Indefinido';
-            
-            
-
-            atualizarSituacao(fatura);
                     
             // Cálculo de IVA e Base Tributável
             const total = parseFloat(fatura.total.replace(',', '.')) || 0;
@@ -515,40 +482,6 @@
 
             
         }
-
-        function atualizarSituacao(fatura) {
-            const situacaoElement = document.getElementById('situacao-status');
-
-            // Confirme que o elemento existe
-            if (!situacaoElement) {
-                console.error('Elemento situacao-status não encontrado!');
-                return;
-            }
-
-            // Reseta as classes
-            situacaoElement.className = 'status';
-
-            // Atualiza o texto e aplica a classe correspondente
-            switch (fatura.situacao) {
-                case 'Registado':
-                    situacaoElement.textContent = 'Registado';
-                    situacaoElement.classList.add('registado');
-                    break;
-                case 'Pendente Classificação':
-                    situacaoElement.textContent = 'Pendente Classificação';
-                    situacaoElement.classList.add('pendente-classificacao');
-                    break;
-                case 'Pendente Receita':
-                    situacaoElement.textContent = 'Pendente Receita';
-                    situacaoElement.classList.add('pendente-receita');
-                    break;
-                default:
-                    situacaoElement.textContent = 'Indefinido';
-                    situacaoElement.classList.add('indefinido');
-                    break;
-            }
-        }
-
 
 
         function salvarReceita(fatura) {
