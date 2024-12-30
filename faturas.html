@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Faturas</title>
+    <link rel="icon" href="icon.png" type="image/png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #d3d3d3;
+            color: black;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            position: absolute;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .menu-container {
+            position: absolute;
+            right: 20px;
+        }
+
+        #menu-toggle {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #menu-toggle:hover {
+            background-color: #005bb5;
+        }
+
+        .menu {
+            background-color: white;
+            color: black;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .menu a:hover {
+            background-color: #f2f2f2;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .popup button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup button.confirm {
+            background-color: #0073e6;
+            color: white;
+        }
+
+        .popup button.cancel {
+            background-color: #f5f5f5;
+            color: black;
+        }
+
+        .alert {
+            display: none;
+            background-color: #ffdddd;
+            color: #d8000c;
+            padding: 10px;
+            margin: 20px 0;
+            border: 1px solid #d8000c;
+            border-radius: 5px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input, .search-bar select {
+            padding: 10px;
+            font-size: 14px;
+            width: 100%;
+            max-width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #0073e6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .search-bar button:hover {
+            background-color: #005bb5;
+        }
+		
+		/* Aumentar largura da dropdown */
+		.dropdown-options {
+			width: 400px; /* Aumentado para evitar quebra de linha */
+		}
+
+			/* Estilizar o botão da dropdown */
+		.dropdown-button {
+			padding: 10px;
+			font-size: 14px;
+			border: none;
+			border-radius: 5px;
+			background-color: #0073e6; /* Azul */
+			color: white; /* Texto branco */
+			cursor: pointer;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		/* Seta para baixo no botão */
+		.dropdown-button::after {
+			content: '▼';
+			font-size: 12px;
+			margin-left: 8px;
+		}
+
+		/* Cor ao passar o mouse */
+		.dropdown-button:hover {
+			background-color: #005bb5; /* Azul escuro */
+		}
+
+		/* Lista de opções da dropdown */
+		.dropdown-options {
+			display: none; /* Será controlado pelo JavaScript */
+			position: absolute;
+			background-color: white;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			margin-top: 5px;
+			padding: 0;
+			list-style: none;
+			z-index: 10;
+			width: 200px;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		/* Estilo dos itens da lista */
+		.dropdown-options li {
+			padding: 10px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+		}
+
+		/* Cor ao passar o mouse */
+		.dropdown-options li:hover {
+			background-color: #f2f2f2;
+		}
+
+		/* Mostra o menu ao passar o mouse */
+		.dropdown:hover .dropdown-options {
+			display: none;
+		}
+
+		/* Indicadores coloridos reutilizando o estilo existente */
+		.setor-indicador {
+			display: inline-block;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			margin-right: 8px;
+		}
+		
+		.setor-indicador {
+			display: inline-block;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			margin-right: 8px;
+			vertical-align: middle;
+		}
+
+		.setor-despesas-gerais {
+			background-color: #4CAF50; /* Verde para Despesas Gerais */
+		}
+
+		.setor-saúde {
+			background-color: #FF5722; /* Vermelho para Saúde */
+		}
+
+		.setor-habitação {
+			background-color: #2196F3; /* Azul para Habitação */
+		}
+
+		.setor-educação {
+			background-color: #FFEB3B; /* Amarelo para Educação */
+		}
+
+		.setor-ginásios {
+			background-color: #9C27B0; /* Roxo para Ginásios */
+		}
+
+		/* Adicione mais setores, se necessário, com as cores correspondentes */
+		.setor-default {
+			background-color: #9E9E9E; /* Cinza para setores desconhecidos */
+		}
+		
+		table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+
+
+        table th {
+            background-color: #f2f2f2;
+            color: #333;
+            cursor: pointer;
+        }
+
+
+		table th, table td {
+		    border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+			width: 10%; /* Largura padrão para todas as colunas */
+			white-space: nowrap; /* Impede quebras de linha */
+			overflow: hidden; /* Esconde conteúdo excedente */
+			text-overflow: ellipsis; /* Adiciona reticências para textos longos */
+		}
+
+		table th:nth-child(1), table td:nth-child(1) {
+			width: 15%; /* Setor de Actividade */
+		}
+
+		table th:nth-child(2), table td:nth-child(2) {
+			width: 10%; /* NIF do Emitente */
+		}
+
+		table th:nth-child(3), table td:nth-child(3) {
+			width: 20%; /* Nome do Emitente */
+		}
+
+		table th:nth-child(4), table td:nth-child(4) {
+			width: 15%; /* Nº Fatura */
+		}
+
+		table th:nth-child(5), table td:nth-child(5) {
+			width: 15%; /* Data Emissão */
+		}
+
+		table th:nth-child(6), table td:nth-child(6) {
+			width: 10%; /* Total */
+            font-weight: bold;
+		}
+
+		table th:nth-child(7), table td:nth-child(7) {
+			width: 10%; /* Situação */
+			text-align: center;
+		}
+
+		table th:nth-child(8), table td:nth-child(8) {
+			width: 15%; /* Ações */
+			text-align: center;
+			vertical-align: middle;
+		}
+		
+        table td:nth-child(6) {
+            color: #0073e6;
+            font-weight: bold;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status.registado {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+		.status.pendente-classificação {
+			background-color: #ffe5b4; /* Tom laranja claro */
+			color: #cc7a00; /* Laranja escuro */
+			border: 1px solid #ffaa00; /* Borda laranja */
+        }
+		
+		.status.pendente-receita {
+			background-color: #cce5ff; /* Azul claro */
+			color: #004085; /* Azul escuro */
+			border: 1px solid #b8daff; /* Borda azul */
+		}		
+
+		.pagination {
+			margin-top: 20px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.pagination-info {
+			font-size: 14px;
+		}
+
+		.pagination-controls {
+			display: flex;
+			gap: 10px;
+		}
+
+		.records-per-page {
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			font-size: 14px;
+		}
+
+        .pagination-controls button {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .pagination-controls button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .pagination-controls select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .alert {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .alert button {
+            margin-left: 10px;
+            background-color: #721c24;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .alert button:hover {
+            background-color: #501216;
+        }
+
+		.action-button {
+			padding: 5px 10px;
+			font-size: 14px;
+			background-color: #0073e6;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			text-align: center; /* Centraliza o texto no botão */
+			white-space: pre-wrap; /* Permite a quebra de linha */
+		}
+
+		.action-button.associar-receita {
+			display: inline-block; /* Garante que o botão respeite o tamanho do conteúdo */
+			line-height: 1.2; /* Ajusta o espaçamento entre as linhas */
+			width: auto; /* Opcional: Ajusta o botão para o tamanho do texto */
+		}
+
+        .action-button:hover {
+            background-color: #005bb5;
+        }
+		
+		
+		#clear-filters-btn {
+			padding: 10px 20px;
+			font-size: 14px;
+			background-color: #ff5c5c; /* Vermelho claro */
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		#clear-filters-btn:hover {
+			background-color: #e04b4b; /* Vermelho mais escuro */
+		}
+		
+		#clear-filters-btn:disabled {
+			background-color: #d3d3d3; /* Cinza claro */
+			color: #888888; /* Texto cinza escuro */
+			cursor: not-allowed; /* Indicador de não clicável */
+		}
+
+		.sort-indicator {
+			font-size: 12px;
+			margin-left: 5px;
+			color: #666;
+			cursor: pointer;
+		}
+
+		.sort-indicator.active {
+			color: #0073e6;
+			font-weight: bold;
+		}
+
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="logo.png" alt="Logo e-Fatura">
+        </div>
+        <h1>Consultar Faturas</h1>
+        <div class="menu-container">
+            <div id="menu-toggle" onclick="toggleMenu()">Menu ▼</div>
+            <div class="menu" id="menu">
+                <a href="index.html">Página Inicial</a>
+                <a href="#">Sair</a>
+				<a href="#" onclick="showResetPopup()">Reset de Dados</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="popup-overlay" id="reset-popup">
+        <div class="popup">
+            <p>Tem certeza de que deseja resetar os dados?</p>
+            <button class="confirm" onclick="resetDados()">Confirmar</button>
+            <button class="cancel" onclick="hideResetPopup()">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="success-popup">
+        <div class="popup">
+            <p>Os dados foram resetados com sucesso!</p>
+            <button class="confirm" onclick="hideSuccessPopup()">OK</button>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="classify-popup">
+        <div class="popup">
+            <p id="classify-message"></p>
+            <button class="confirm" id="confirm-classify-btn">Confirmar</button>
+            <button class="cancel" onclick="hideClassifyPopup()">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Pesquisar...">
+            <select id="filter-column">
+                <option value="setor">Setor</option>
+                <option value="nif">NIF</option>
+                <option value="nome">Nome</option>
+                <option value="numero">Número</option>
+                <option value="data">Data</option>
+                <option value="total">Total</option>
+                <option value="situacao">Situação</option>
+            </select>
+            <button onclick="applyFilters()">Filtrar</button>
+			<button id="clear-filters-btn" onclick="clearFilters()" style="display: none;">Limpar Filtros</button>
+        </div>
+
+        <table id="faturas-table">
+
+			<thead>
+				<tr>
+					<th onclick="ordenarTabela('setor')">Setor de Actividade <span class="sort-indicator">▼</span></th>
+					<th onclick="ordenarTabela('nif')">NIF do Emitente <span class="sort-indicator">▼</span></th>
+					<th onclick="ordenarTabela('nome')">Nome do Emitente <span class="sort-indicator">▼</span></th>
+					<th onclick="ordenarTabela('numero')">Nº Fatura <span class="sort-indicator">▼</span></th>
+					<th onclick="ordenarTabela('data')">Data Emissão <span class="sort-indicator">▼</span></th>
+					<th onclick="ordenarTabela('total')">Total <span class="sort-indicator">▼</span></th>
+					<th onclick="ordenarTabela('situacao')">Situação <span class="sort-indicator">▼</span></th>
+					<th>Ações</th>
+				</tr>
+			</thead>
+
+            <tbody id="table-body">
+                <!-- Tabela será preenchida dinamicamente -->
+            </tbody>
+        </table>
+
+        <div class="alert" id="no-results-alert">
+            Não foram encontrados resultados. Deseja limpar os filtros?
+            <button onclick="clearFilters()">Limpar Filtros</button>
+        </div>
+		
+		<div class="pagination">
+			<div class="pagination-info" id="pagination-info">
+				A mostrar <span id="records-range">1 a 5</span> de <span id="total-records">11</span> faturas.
+			</div>
+			<div class="pagination-controls">
+				<button onclick="prevPage()">Anterior</button>
+				<button onclick="nextPage()">Próximo</button>
+			</div>
+			<div class="records-per-page">
+				<label for="records-per-page">Faturas por página:</label>
+				<select id="records-per-page" onchange="changeRecordsPerPage()">
+					<option value="10">10</option>
+					<option value="25">25</option>
+					<option value="50">50</option>
+				</select>
+			</div>
+		</div>
+
+
+
+    </div>
+
+    <script>
+        const faturas = [];
+		let currentPage = 1;
+		let recordsPerPage = 10;
+		let filtroAtual = null; // Armazena o filtro atual
+		let filtrosAtivos = false;
+
+		
+		function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function showResetPopup() {
+            toggleMenu(); // Fecha o menu antes de mostrar a popup
+            document.getElementById('reset-popup').style.display = 'flex';
+        }
+
+        function hideResetPopup() {
+            document.getElementById('reset-popup').style.display = 'none';
+        }
+
+        function showSuccessPopup() {
+            document.getElementById('success-popup').style.display = 'flex';
+        }
+
+        function hideSuccessPopup() {
+            document.getElementById('success-popup').style.display = 'none';
+            location.reload(); // Recarrega a página após fechar a popup de sucesso
+        }
+
+		function showClassifyPopup(message, onConfirm) {
+            document.getElementById('classify-message').textContent = message;
+            document.getElementById('confirm-classify-btn').onclick = onConfirm;
+            document.getElementById('classify-popup').style.display = 'flex';
+        }
+
+        function hideClassifyPopup() {
+            document.getElementById('classify-popup').style.display = 'none';
+        }
+
+		document.addEventListener('click', function(event) {
+			// Fecha todos os menus dropdown ao clicar fora
+			const openDropdowns = document.querySelectorAll('.dropdown-options');
+			openDropdowns.forEach(menu => menu.style.display = 'none');
+
+			// Verifica se o clique foi no botão da dropdown
+			const button = event.target.closest('.dropdown-button');
+			if (button) {
+				const dropdown = button.nextElementSibling; // O menu dropdown correspondente
+				if (dropdown) {
+					dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+				}
+			}
+		});
+		
+		
+		function loadFaturas() {
+			const urlParams = new URLSearchParams(window.location.search);
+			const filtroSituacao = urlParams.get('filtroSituacao') ? JSON.parse(urlParams.get('filtroSituacao')) : null;
+
+			fetch('http://localhost:3000/faturas')
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Erro ao carregar faturas.');
+					}
+					return response.json();
+				})
+				.then(data => {
+					faturas.length = 0; // Limpa o array atual
+					faturas.push(...data); // Preenche com os dados do backend
+
+					if (filtroSituacao) {
+						const filteredFaturas = faturas.filter(f => filtroSituacao.includes(f.situacao));
+						renderTable(filteredFaturas); // Renderiza com os filtros
+					} else {
+						renderTable(); // Renderiza sem filtros
+					}
+				})
+				.catch(error => console.error('Erro ao carregar faturas:', error));
+		}
+
+
+
+				
+		function atualizarFatura(numeroFatura, novaFatura) {
+			const encodedNumero = encodeURIComponent(numeroFatura); // Codifica caracteres especiais
+			fetch(`http://localhost:3000/faturas/${encodedNumero}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(novaFatura)
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Erro ao salvar fatura.');
+					}
+					return response.json();
+				})
+				.then(() => {
+					console.log(`Fatura ${numeroFatura} atualizada com sucesso.`);
+				})
+				.catch(error => console.error('Erro ao atualizar fatura:', error));
+		}
+
+
+
+		function classificarFatura(setor, index) {
+    const faturaAtual = faturas[index];
+    const filtroSituacao = new URLSearchParams(window.location.search).get('filtroSituacao') ? JSON.parse(new URLSearchParams(window.location.search).get('filtroSituacao')) : null;
+
+    const faturasRelacionadas = faturas.filter((fatura) =>
+        fatura.situacao === "Pendente Classificação" && fatura.nif === faturaAtual.nif
+    );
+
+    if (faturasRelacionadas.length > 1) {
+        const confirmMessage = `Deseja classificar todas as ${faturasRelacionadas.length} faturas do emitente "${faturaAtual.nome}" com NIF ${faturaAtual.nif} no setor "${setor}"?`;
+
+        showClassifyPopup(confirmMessage, () => {
+            faturasRelacionadas.forEach((fatura) => {
+                const faturaAtualizada = {
+                    ...fatura,
+                    setor: setor,
+                    situacao: setor === "Saúde" ? "Pendente Receita" : "Registado",
+                };
+
+                atualizarFatura(fatura.numero, faturaAtualizada);
+
+                // Atualiza no frontend
+                const globalIndex = faturas.findIndex((f) => f.numero === fatura.numero);
+                if (globalIndex !== -1) {
+                    faturas[globalIndex] = faturaAtualizada;
+                }
+            });
+
+            if (filtroSituacao) {
+                const filteredFaturas = faturas.filter(f => filtroSituacao.includes(f.situacao));
+                renderTable(filteredFaturas);
+            } else {
+                renderTable();
+            }
+            hideClassifyPopup(); // Esconde a popup de classificação
+        });
+    } else {
+        const confirmMessage = `Deseja classificar esta fatura como "${setor}"?`;
+        showClassifyPopup(confirmMessage, () => {
+            const faturaAtualizada = {
+                ...faturaAtual,
+                setor: setor,
+                situacao: setor === "Saúde" ? "Pendente Receita" : "Registado",
+            };
+
+            atualizarFatura(faturaAtual.numero, faturaAtualizada);
+
+            // Atualiza no frontend
+            faturas[index] = faturaAtualizada;
+
+            if (filtroSituacao) {
+                const filteredFaturas = faturas.filter(f => filtroSituacao.includes(f.situacao));
+                renderTable(filteredFaturas);
+            } else {
+                renderTable();
+            }
+            hideClassifyPopup(); // Esconde a popup de classificação
+        });
+    }
+}
+
+
+		function classificarEmMassa(setor, nifEmitente) {
+			const faturasParaClassificar = faturas.filter(
+				(fatura) => fatura.situacao === "Pendente Classificação" && fatura.nif === nifEmitente
+			);
+
+			const confirmMessage = `Deseja classificar todas as ${faturasParaClassificar.length} faturas do emitente "${faturasParaClassificar[0].nome}" com NIF ${nifEmitente} no setor "${setor}"?`;
+
+			showClassifyPopup(confirmMessage, () => {
+				faturasParaClassificar.forEach((fatura) => {
+					const faturaAtualizada = {
+						...fatura,
+						setor: setor,
+						situacao: setor === "Saúde" ? "Pendente Receita" : "Registado",
+					};
+
+					// Atualiza no backend
+					atualizarFatura(fatura.numero, faturaAtualizada);
+
+					// Atualiza no frontend
+					const index = faturas.findIndex((f) => f.numero === fatura.numero);
+					if (index !== -1) {
+						faturas[index] = faturaAtualizada;
+					}
+				});
+
+				renderTable(); // Recarrega a tabela após a atualização
+				hideClassifyPopup();
+			});
+		}
+
+
+		function renderTable(filteredFaturas = faturas) {
+    const tableBody = document.getElementById('table-body');
+    const noResultsAlert = document.getElementById('no-results-alert');
+    tableBody.innerHTML = '';
+
+    const totalRecords = filteredFaturas.length;
+    const startIndex = (currentPage - 1) * recordsPerPage;
+    const endIndex = Math.min(startIndex + recordsPerPage, totalRecords);
+    const paginatedFaturas = filteredFaturas.slice(startIndex, endIndex);
+
+    if (totalRecords === 0) {
+        noResultsAlert.style.display = 'block';
+    } else {
+        noResultsAlert.style.display = 'none';
+        paginatedFaturas.forEach((fatura, index) => {
+            const row = document.createElement('tr');
+            const globalIndex = faturas.findIndex(f => f.numero === fatura.numero);
+
+            let setorContent;
+            if (fatura.situacao === "Pendente Classificação") {
+                setorContent = `
+                    <div class="dropdown">
+                        <button class="dropdown-button">Selecionar Setor</button>
+                        <ul class="dropdown-options">
+                            <li onclick="classificarFatura('Despesas Gerais', ${globalIndex})">
+                                <span class="setor-indicador setor-despesas-gerais"></span>Despesas Gerais
+                            </li>
+                            <li onclick="classificarFatura('Saúde', ${globalIndex})">
+                                <span class="setor-indicador setor-saúde"></span>Saúde
+                            </li>
+                            <li onclick="classificarFatura('Habitação', ${globalIndex})">
+                                <span class="setor-indicador setor-habitação"></span>Habitação
+                            </li>
+                            <li onclick="classificarFatura('Educação', ${globalIndex})">
+                                <span class="setor-indicador setor-educação"></span>Educação
+                            </li>
+                            <li onclick="classificarFatura('Ginásios', ${globalIndex})">
+                                <span class="setor-indicador setor-ginásios"></span>Ginásios
+                            </li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                const setorClass = `setor-${fatura.setor?.toLowerCase().replace(/ /g, '-') || 'default'}`;
+                setorContent = `
+                    <span class="setor-indicador ${setorClass}"></span>
+                    ${fatura.setor || "Não definido"}
+                `;
+            }
+
+            const actionButton = fatura.situacao === "Pendente Receita"
+                ? `<button class="action-button" onclick="associarReceita('${fatura.numero}')">Associar Receita</button>`
+                : `<button class="action-button" onclick="consultarFatura('${fatura.numero}')">Consultar</button>`;
+
+            row.innerHTML = `
+                <td>${setorContent}</td>
+                <td>${fatura.nif}</td>
+                <td>${fatura.nome}</td>
+                <td><a href="detalhe.html?numero=${fatura.numero}">${fatura.numero}</a></td>
+                <td>${fatura.data}</td>
+                <td>${fatura.total}</td>
+                <td><span class="status ${fatura.situacao?.toLowerCase().replace(' ', '-')}">${fatura.situacao || "Indefinida"}</span></td>
+                <td>${actionButton}</td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    updatePaginationInfo(filteredFaturas.length);
+    updatePaginationControls(filteredFaturas.length);
+
+    const clearFiltersButton = document.getElementById('clear-filters-btn');
+    clearFiltersButton.style.display = filtrosAtivos ? 'inline-block' : 'none';
+}
+
+function consultarFatura(numeroFatura) {
+    window.location.href = `detalhe.html?numero=${numeroFatura}`;
+}
+
+	function resetFilters() {
+    filtroAtual = null; // Remove o filtro aplicado
+    document.getElementById('search').value = '';
+    document.getElementById('filter-column').value = 'setor';
+
+    document.getElementById('no-results-alert').style.display = 'none';
+    document.getElementById('clear-filters-btn').style.display = 'none';
+
+    renderTable();
+}
+
+
+
+		function updatePaginationInfo(totalRecords) {
+			const startIndex = (currentPage - 1) * recordsPerPage + 1;
+			const endIndex = Math.min(startIndex + recordsPerPage - 1, totalRecords);
+
+			const paginationInfo = document.getElementById('pagination-info');
+			paginationInfo.textContent = `A mostrar ${startIndex} a ${endIndex} de ${totalRecords} faturas.`;
+		}
+
+		function updatePaginationControls(totalRecords) {
+			const totalPages = Math.ceil(totalRecords / recordsPerPage);
+
+			const prevButton = document.querySelector('.pagination-controls button:nth-child(1)');
+			const nextButton = document.querySelector('.pagination-controls button:nth-child(2)');
+
+			prevButton.disabled = currentPage === 1;
+			nextButton.disabled = currentPage === totalPages;
+		}
+
+		function prevPage() {
+			if (currentPage > 1) {
+				currentPage--;
+				applyFilters();
+			}
+		}
+
+		function nextPage() {
+			const totalRecords = faturas.length;
+			const totalPages = Math.ceil(totalRecords / recordsPerPage);
+
+			if (currentPage < totalPages) {
+				currentPage++;
+				applyFilters();
+			}
+		}
+
+		function changeRecordsPerPage() {
+			recordsPerPage = parseInt(document.getElementById('records-per-page').value);
+			currentPage = 1; // Volta à primeira página ao alterar o número de registros por página
+			applyFilters();
+		}
+
+
+        function associarReceita(numeroFatura) {
+            window.location.href = `detalhe.html?numero=${numeroFatura}&editReceita=true`;
+        }
+
+
+
+
+		function applyFilters() {
+    const searchValue = document.getElementById('search').value.toLowerCase();
+    const filterColumn = document.getElementById('filter-column').value;
+
+    const filteredFaturas = faturas.filter(fatura => {
+        const columnValue = fatura[filterColumn]?.toString().toLowerCase() || '';
+        return columnValue.includes(searchValue);
+    });
+
+    filtrosAtivos = searchValue !== '' || filterColumn !== 'setor';
+    renderTable(filteredFaturas);
+}
+
+
+		function renderFilteredTable(filteredFaturas) {
+			const tableBody = document.getElementById('table-body');
+			tableBody.innerHTML = '';
+
+			filteredFaturas.forEach((fatura, index) => {
+				const row = document.createElement('tr');
+
+				let setorContent;
+				if (fatura.situacao === "Pendente Classificação") {
+					setorContent = `
+						<div class="dropdown">
+							<button class="dropdown-button">Selecionar Setor</button>
+							<ul class="dropdown-options">
+								<li onclick="classificarFatura('Despesas Gerais', ${index})">
+									<span class="setor-indicador setor-despesas-gerais"></span>Despesas Gerais
+								</li>
+								<li onclick="classificarFatura('Saúde', ${index})">
+									<span class="setor-indicador setor-saúde"></span>Saúde
+								</li>
+								<li onclick="classificarFatura('Habitação', ${index})">
+									<span class="setor-indicador setor-habitação"></span>Habitação
+								</li>
+								<li onclick="classificarFatura('Educação', ${index})">
+									<span class="setor-indicador setor-educação"></span>Educação
+								</li>
+								<li onclick="classificarFatura('Ginásios', ${index})">
+									<span class="setor-indicador setor-ginásios"></span>Ginásios
+								</li>
+							</ul>
+						</div>
+					`;
+				} else {
+					setorContent = `
+						<span class="setor-indicador setor-${fatura.setor.toLowerCase().replace(/ /g, '-')}"></span>
+						${fatura.setor}
+					`;
+				}
+
+				row.innerHTML = `
+					<td>${setorContent}</td>
+					<td>${fatura.nif}</td>
+					<td>${fatura.nome}</td>
+					<td>${fatura.numero}</td>
+					<td>${fatura.data}</td>
+					<td>${fatura.total}</td>
+					<td><span class="status ${fatura.situacao.toLowerCase().replace(' ', '-')}">${fatura.situacao}</span></td>
+					<td><button class="action-button">Alterar</button></td>
+				`;
+
+				tableBody.appendChild(row);
+			});
+		}
+
+		
+		let ordemAtual = {}; // Armazena o estado da ordenação para cada coluna
+		function ordenarTabela(coluna) {
+			ordemAtual[coluna] = ordemAtual[coluna] === 'asc' ? 'desc' : 'asc';
+
+			const sortedFaturas = [...faturas].sort((a, b) => {
+				let valA = a[coluna];
+				let valB = b[coluna];
+
+				if (coluna === 'total') {
+					valA = parseFloat(valA.replace(',', '.')) || 0;
+					valB = parseFloat(valB.replace(',', '.')) || 0;
+				} else if (coluna === 'data') {
+					valA = new Date(valA.split('/').reverse().join('-'));
+					valB = new Date(valB.split('/').reverse().join('-'));
+				}
+
+				return ordemAtual[coluna] === 'asc' ? valA - valB : valB - valA;
+			});
+
+			renderTable(sortedFaturas);
+
+			// Atualiza os indicadores de ordenação
+			document.querySelectorAll('.sort-indicator').forEach(indicator => indicator.classList.remove('active'));
+			const activeIndicator = document.querySelector(`th[onclick="ordenarTabela('${coluna}')"] .sort-indicator`);
+			if (activeIndicator) {
+				activeIndicator.classList.add('active');
+			}
+		}
+
+
+        function resetDados() {
+            fetch('http://localhost:3000/reset', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao resetar os dados.');
+                }
+                return response.json();
+            })
+            .then(() => {
+                hideResetPopup();
+                showSuccessPopup();
+            })
+            .catch(error => {
+                console.error('Erro ao resetar os dados:', error);
+            });
+        }
+
+		function verificarFiltros() {
+    const filtroSituacao = new URLSearchParams(window.location.search).get('filtroSituacao');
+    const clearFiltersButton = document.getElementById('clear-filters-btn');
+
+    if (filtroSituacao) {
+        filtrosAtivos = true;
+        clearFiltersButton.style.display = 'inline-block';
+    } else {
+        filtrosAtivos = false;
+        clearFiltersButton.style.display = 'none';
+    }
+}
+
+// Chame a função verificarFiltros ao carregar a página
+document.addEventListener('DOMContentLoaded', () => {
+    verificarFiltros();
+    // Outras funções que precisam ser chamadas ao carregar a página
+    verificarAvisos();
+});
+
+
+        loadFaturas();
+
+function clearFilters() {
+    filtrosAtivos = false;
+    document.getElementById('search').value = '';
+    document.getElementById('filter-column').value = 'setor';
+
+    document.getElementById('no-results-alert').style.display = 'none';
+    document.getElementById('clear-filters-btn').style.display = 'none';
+
+    renderTable();
+}
+    </script>
+</body>
+</html>

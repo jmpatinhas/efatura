@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhe Fatura</title>
+    <link rel="icon" href="icon.png" type="image/png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #d3d3d3;
+            color: black;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            position: absolute;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .menu-container {
+            position: absolute;
+            right: 20px;
+        }
+
+        #menu-toggle {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #menu-toggle:hover {
+            background-color: #005bb5;
+        }
+
+        .menu {
+            background-color: white;
+            color: black;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .menu a:hover {
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .button-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .button-bar button {
+            padding: 10px 15px;
+            font-size: 14px;
+            background-color: #0073e6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button-bar button:hover {
+            background-color: #005bb5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+        .form-control {
+            padding: 8px;
+            font-size: 14px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .action-button {
+            padding: 8px 12px;
+            font-size: 14px;
+            background-color: #0073e6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            background-color: #005bb5;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group span {
+            font-weight: bold;
+        }
+
+        .setor-indicador {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .setor-despesas-gerais {
+            background-color: #4CAF50; /* Verde para Despesas Gerais */
+        }
+
+        .setor-saúde {
+            background-color: #FF5722; /* Vermelho para Saúde */
+        }
+
+        .setor-habitação {
+            background-color: #2196F3; /* Azul para Habitação */
+        }
+
+        .setor-educação {
+            background-color: #FFEB3B; /* Amarelo para Educação */
+        }
+
+        .setor-ginásios {
+            background-color: #9C27B0; /* Roxo para Ginásios */
+        }
+
+        .setor-default {
+            background-color: #9E9E9E; /* Cinza para setores desconhecidos */
+        }
+
+        #valor-receita {
+            width: 80%; /* Ajuste a largura conforme necessário */
+            max-width: 200px; /* Limita o tamanho máximo */
+            box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .status.registado {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.pendente-classificacao {
+            background-color: #ffe5b4; /* Tom laranja claro */
+            color: #cc7a00; /* Laranja escuro */
+            border: 1px solid #ffaa00; /* Borda laranja */
+        }
+
+        .status.pendente-receita {
+            background-color: #cce5ff; /* Azul claro */
+            color: #004085; /* Azul escuro */
+            border: 1px solid #b8daff; /* Borda azul */
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="logo.png" alt="Logo e-Fatura">
+        </div>
+        <h1>Detalhe Fatura</h1>
+        <div class="menu-container">
+            <div id="menu-toggle" onclick="toggleMenu()">Menu ▼</div>
+            <div class="menu" id="menu">
+                <a href="index.html">Página Inicial</a>
+                <a href="#">Sair</a>
+                <a href="#" onclick="showResetPopup()">Reset de Dados</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="button-bar">
+            <button onclick="voltar()">Voltar</button>
+        </div>
+
+        <h2>Informação do Emitente</h2>
+
+        <table>
+            <tr>
+                <th>Nº Fatura</th>
+                <td id="numero">FR 000-000000/00</td>
+            </tr>
+            <tr>
+                <th>NIF</th>
+                <td id="nif">000000000</td>
+            </tr>
+            <tr>
+                <th>Nome</th>
+                <td id="nome">NA</td>
+            </tr>
+            <tr>
+                <th>Data de Emissão</th>
+                <td id="data-emissao">00/00/0000</td>
+            </tr>
+            <tr>
+                <th>Setor de Atividade</th>
+                <td id="setor">
+                    <span class="setor-indicador setor-despesas-gerais"></span>
+                    <span id="setor-texto">Indefinido</span>
+                </td>
+            </tr>
+            <tr>
+                <th>Situação</th>
+                <td id="situacao" style="text-align: center;">
+                    <span id="situacao-status" class="status">Indefinido</span>
+                </td>
+            </tr>            
+            
+        </table>
+
+        <h2>Detalhes Fiscais</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Total</th>
+                    <th>Região de Imposto</th>
+                    <th>Taxa</th>
+                    <th>IVA</th>
+                    <th>Base Tributável</th>
+                    <th>Número de Certificado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="total">0,00</td>
+                    <td id="regiao-imposto">NA</td>
+                    <td id="taxa">0%</td>
+                    <td id="iva">0,00</td>
+                    <td id="base-tributavel">0,00</td>
+                    <td id="numero-certificado">NA</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>Receita Associada</h2>
+        <table id="receita-associada" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Receita</th>
+                    <th>Valor Receita</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <select class="form-control" id="receita" disabled>
+                            <option value="sim">Sim</option>
+                            <option value="não">Não</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" id="valor-receita" placeholder="0,00" disabled />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarDetalhesFatura();
+        });
+
+        document.getElementById('menu-toggle').addEventListener('click', function () {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        function obterNumeroFatura() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('numero'); // Retorna o número da fatura
+        }
+
+        function carregarDetalhesFatura() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const numeroFatura = urlParams.get('numero');
+            const editReceita = urlParams.get('editReceita') === 'true';
+
+            try {
+                fetch('faturas.json') // Substitua pelo caminho correto
+                    .then(response => response.json())
+                    .then(faturas => {
+                        const fatura = faturas.find(f => f.numero === numeroFatura);
+
+                        if (fatura) {
+                            preencherDetalhes(fatura, editReceita);
+                        } else {
+                            alert('Fatura não encontrada!');
+                        }
+                    });
+            } catch (error) {
+                console.error('Erro ao carregar as faturas:', error);
+                alert('Erro ao carregar os detalhes da fatura.');
+            }
+        }
+
+
+        function preencherDetalhes(fatura, editReceita) {
+            // Campos básicos
+            document.getElementById('numero').innerText = fatura.numero;
+            document.getElementById('nif').innerText = fatura.nif;
+            document.getElementById('nome').innerText = fatura.nome;
+            document.getElementById('data-emissao').innerText = fatura.data;
+            document.getElementById('total').innerText = fatura.total;
+            document.getElementById('taxa').innerText = fatura.taxa;
+            document.getElementById('numero-certificado').innerText = fatura.numeroCertificado || 'NA';
+            document.getElementById('regiao-imposto').innerText = fatura.regiaoImposto || 'NA';
+            document.getElementById('situacao').innerText = fatura.situacao || 'Indefinido';
+            
+            
+
+            atualizarSituacao(fatura);
+                    
+            // Cálculo de IVA e Base Tributável
+            const total = parseFloat(fatura.total.replace(',', '.')) || 0;
+            const taxa = parseFloat(fatura.taxa.replace('%', '')) || 0;
+
+            if (total > 0 && taxa > 0) {
+                const iva = (total * taxa) / 100;
+                const baseTributavel = total - iva;
+
+            // Atualiza o DOM com os valores calculados
+                document.getElementById('iva').innerText = iva.toFixed(2).replace('.', ',');
+                document.getElementById('base-tributavel').innerText = baseTributavel.toFixed(2).replace('.', ',');
+            } else {
+            // Exibe valores padrão ou mensagem de erro
+                document.getElementById('iva').innerText = 'Erro';
+                document.getElementById('base-tributavel').innerText = 'Erro';
+                console.error(`Valores inválidos para o cálculo: Total=${total}, Taxa=${taxa}`);
+            }
+
+            // Preenche setor
+            const setorTexto = document.getElementById('setor-texto');
+            const setorIndicador = document.querySelector('.setor-indicador');
+
+            if (fatura.setor) {
+                setorTexto.innerText = fatura.setor;
+                setorIndicador.className = `setor-indicador setor-${fatura.setor.toLowerCase().replace(/ /g, '-')}`;
+            } else {
+                setorTexto.innerText = 'Indefinido';
+                setorIndicador.className = 'setor-indicador setor-default';
+            }
+
+            // Manipula "Receita Associada"
+            const receitaTable = document.getElementById('receita-associada');
+            const receitaTitulo = document.querySelector('h2:nth-of-type(3)'); // Seleciona o terceiro título (Receita Associada)
+
+            if (fatura.setor === 'Saúde') {
+                receitaTable.style.display = 'table';
+
+                const receitaField = document.getElementById('receita');
+                const valorReceitaField = document.getElementById('valor-receita');
+
+                receitaField.value = fatura.receita?.toLowerCase() || 'não';
+                valorReceitaField.value = fatura.valorreceita || '';
+
+                if (editReceita) {
+                    receitaField.disabled = false;
+                    valorReceitaField.disabled = false;
+
+                    const salvarButton = document.createElement('button');
+                    salvarButton.innerText = 'Gravar';
+                    salvarButton.className = 'action-button';
+                    salvarButton.addEventListener('click', () => salvarReceita(fatura));
+                    document.getElementById('receita-associada').parentElement.appendChild(salvarButton);
+                } else {
+                    receitaField.disabled = true;
+                    valorReceitaField.disabled = true;
+                }
+            } else {
+                receitaTable.style.display = 'none';
+                receitaTitulo.style.display = 'none';
+            }
+
+            
+        }
+
+        function atualizarSituacao(fatura) {
+            const situacaoElement = document.getElementById('situacao-status');
+
+            // Confirme que o elemento existe
+            if (!situacaoElement) {
+                console.error('Elemento situacao-status não encontrado!');
+                return;
+            }
+
+            // Reseta as classes
+            situacaoElement.className = 'status';
+
+            // Atualiza o texto e aplica a classe correspondente
+            switch (fatura.situacao) {
+                case 'Registado':
+                    situacaoElement.textContent = 'Registado';
+                    situacaoElement.classList.add('registado');
+                    break;
+                case 'Pendente Classificação':
+                    situacaoElement.textContent = 'Pendente Classificação';
+                    situacaoElement.classList.add('pendente-classificacao');
+                    break;
+                case 'Pendente Receita':
+                    situacaoElement.textContent = 'Pendente Receita';
+                    situacaoElement.classList.add('pendente-receita');
+                    break;
+                default:
+                    situacaoElement.textContent = 'Indefinido';
+                    situacaoElement.classList.add('indefinido');
+                    break;
+            }
+        }
+
+
+
+        function salvarReceita(fatura) {
+            const novaReceita = document.getElementById('receita').value;
+            const novoValorReceita = document.getElementById('valor-receita').value;
+
+            if (!novoValorReceita) {
+                alert('Por favor, insira o valor da receita.');
+                return;
+            }
+
+            // Campos a serem enviados na requisição
+            const dadosAtualizados = {
+                receita: novaReceita.charAt(0).toUpperCase() + novaReceita.slice(1),
+                valorreceita: novoValorReceita,
+                situacao: "Registado",
+            };
+
+            fetch(`http://localhost:3000/faturas/atualizar-campos/${encodeURIComponent(fatura.numero)}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dadosAtualizados),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Erro ao salvar a fatura: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then((faturaAtualizada) => {
+                    alert('Receita gravada com sucesso!');
+                    console.log('Fatura atualizada:', faturaAtualizada);
+
+
+
+                    // Atualiza os valores no DOM
+                    document.getElementById('receita').value = faturaAtualizada.receita.toLowerCase();
+                    document.getElementById('valor-receita').value = faturaAtualizada.valorreceita;
+
+                    // Atualiza a situação no DOM
+                    const situacaoElement = document.getElementById('situacao');
+                    if (situacaoElement) {
+                        situacaoElement.innerText = faturaAtualizada.situacao;
+                    }
+
+                    // Remove o parâmetro editReceita do URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.delete('editReceita');
+                    const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+                    window.history.replaceState({}, '', newUrl);
+
+                    // Faz o refresh da página
+                    location.reload();
+                })
+                .catch((error) => {
+                    console.error('Erro ao salvar a receita:', error);
+                    alert(`Erro ao salvar a receita: ${error.message || error}. Por favor, tente novamente.`);
+                });
+        }
+
+
+        function voltar() {
+            // Redireciona para a página faturas.html e força o recarregamento
+            window.location.href = 'faturas.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icon.png" type="image/png">
+    <title>Página Inicial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #d3d3d3; /* Alterado para cinza claro */
+            color: black;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            position: absolute;
+            left: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .menu-container {
+            position: absolute;
+            right: 20px;
+        }
+
+        #menu-toggle {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #menu-toggle:hover {
+            background-color: #005bb5;
+        }
+
+        .menu {
+            background-color: white;
+            color: black;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            width: 200px; /* Tornando o menu mais largo */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .menu a:hover {
+            background-color: #f2f2f2;
+        }
+
+        .navbar a {
+            color: #0073e6;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 14px;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+        }
+
+        .year-navigation {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .year-navigation button {
+            background-color: #0073e6;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .year-navigation button:hover {
+            background-color: #005bb5;
+        }
+
+        .year-navigation h2 {
+            font-size: 18px;
+            color: #333;
+            margin: 0;
+        }
+
+        .deductions-info {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .deductions-info span {
+            font-size: 22px;
+            font-weight: bold;
+            color: #0073e6;
+        }
+
+        .summary table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .summary table th, .summary table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .summary table th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        .summary table td {
+            color: #555;
+        }
+
+        .summary table td:nth-child(3) {
+            color: #0073e6; /* Tornando o texto das deduções azul */
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 20px;
+        }
+
+        .progress {
+            height: 100%;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .progress.health {
+            width: 20%;
+            background-color: #ff6b6b;
+        }
+
+        .progress.education {
+            width: 40%;
+            background-color: #ffa500;
+        }
+
+        .progress.habitation {
+            width: 60%;
+            background-color: #32cd32;
+        }
+
+        .progress.general {
+            width: 80%;
+            background-color: #0073e6;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #0073e6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .actions button:hover {
+            background-color: #005bb5;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .popup button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup button.confirm {
+            background-color: #0073e6;
+            color: white;
+        }
+
+        .popup button.cancel {
+            background-color: #f5f5f5;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="Logo e-Fatura">
+        </div>
+        <h1>Portal do Adquirente</h1>
+        <div class="menu-container">
+            <div id="menu-toggle" onclick="toggleMenu()">Menu ▼</div>
+            <div class="menu" id="menu">
+                <a href="faturas.html">Consultar Faturas</a>
+                <a href="#">Sair</a>
+                <a href="#" onclick="showResetPopup()">Reset de Dados</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="popup-overlay" id="reset-popup">
+        <div class="popup">
+            <p>Tem certeza de que deseja resetar os dados?</p>
+            <button class="confirm" onclick="resetDados()">Confirmar</button>
+            <button class="cancel" onclick="hideResetPopup()">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="success-popup">
+        <div class="popup">
+            <p>Os dados foram resetados com sucesso!</p>
+            <button class="confirm" onclick="hideSuccessPopup()">OK</button>
+        </div>
+    </div>
+
+	<div id="warnings-container" style="display: none; background-color: #fff7e6; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; margin-bottom: 20px; display: flex; align-items: center;">
+		<img src="warning-icon.png" alt="Warning" style="height: 24px; margin-right: 10px;">
+		<div>
+			<p id="warning-classification" style="margin: 0; color: #856404;"></p>
+			<p id="warning-receipt" style="margin: 0; color: #856404;"></p>
+		</div>
+		<button id="complementar-faturas-btn" style="margin-left: auto; padding: 10px 20px; background-color: #0073e6; color: white; border: none; border-radius: 5px; cursor: pointer;" onclick="redirecionarFaturas()">Complementar Faturas</button>
+	</div>
+
+
+    <div class="container">
+        <div class="header-content">
+            <div class="year-navigation">
+                <button>◀</button>
+                <h2>2024</h2>
+                <button>▶</button>
+            </div>
+            <div class="deductions-info">
+                Deduções Provisórias em IRS: <span>1130,17€</span>
+            </div>
+        </div>
+
+        <div class="summary">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Setor de Atividade</th>
+                        <th>Despesa Total</th>
+                        <th>Deduções</th>
+                        <th>Visualização</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Despesas Gerais</td>
+                        <td>3.023,42€</td>
+                        <td>250,00€</td>
+                        <td><div class="progress-bar"><div class="progress general">80%</div></div></td>
+                    </tr>
+                    <tr>
+                        <td>Saúde</td>
+                        <td>333,68€</td>
+                        <td>43,39€</td>
+                        <td><div class="progress-bar"><div class="progress health">20%</div></div></td>
+                    </tr>
+                    <tr>
+                        <td>Educação</td>
+                        <td>1.832,95€</td>
+                        <td>533,55€</td>
+                        <td><div class="progress-bar"><div class="progress education">40%</div></div></td>
+                    </tr>
+                    <tr>
+                        <td>Habitação</td>
+                        <td>4.013,24€</td>
+                        <td>288,36€</td>
+                        <td><div class="progress-bar"><div class="progress habitation">60%</div></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+       function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function showResetPopup() {
+            toggleMenu(); // Fecha o menu antes de mostrar a popup
+            document.getElementById('reset-popup').style.display = 'flex';
+        }
+
+        function hideResetPopup() {
+            document.getElementById('reset-popup').style.display = 'none';
+        }
+
+        function showSuccessPopup() {
+            document.getElementById('success-popup').style.display = 'flex';
+        }
+
+        function hideSuccessPopup() {
+            document.getElementById('success-popup').style.display = 'none';
+            location.reload(); // Recarrega a página após fechar a popup de sucesso
+        }
+
+        function resetDados() {
+            fetch('http://localhost:3000/reset', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao resetar os dados.');
+                }
+                return response.json();
+            })
+            .then(() => {
+                hideResetPopup();
+                showSuccessPopup();
+            })
+            .catch(error => {
+                console.error('Erro ao resetar os dados:', error);
+            });
+        }
+		
+	function redirecionarFaturas() {
+		// Constrói a URL com parâmetros de filtro para redirecionar
+		const params = new URLSearchParams({
+			filtroSituacao: JSON.stringify(['Pendente Classificação', 'Pendente Receita'])
+		});
+		window.location.href = `faturas.html?${params.toString()}`;
+	}
+
+    async function verificarAvisos() {
+        try {
+            const response = await fetch('faturas.json');
+            if (!response.ok) {
+                console.error('Erro ao carregar faturas.json');
+                return;
+            }
+
+            const faturas = await response.json();
+            const pendentesClassificacao = faturas.filter(f => f.situacao === 'Pendente Classificação');
+            const pendentesReceita = faturas.filter(f => f.situacao === 'Pendente Receita');
+
+            const warningsContainer = document.getElementById('warnings-container');
+            const warningClassification = document.getElementById('warning-classification');
+            const warningReceipt = document.getElementById('warning-receipt');
+
+            if (pendentesClassificacao.length > 0 || pendentesReceita.length > 0) {
+                warningsContainer.style.display = 'flex';
+
+                if (pendentesClassificacao.length > 0) {
+                    warningClassification.textContent = `Tem ${pendentesClassificacao.length} fatura(s) pendente(s) de classificação.`;
+                } else {
+                    warningClassification.textContent = '';
+                }
+
+                if (pendentesReceita.length > 0) {
+                    warningReceipt.textContent = `Tem ${pendentesReceita.length} fatura(s) com despesas de saúde sem associação de receita médica.`;
+                } else {
+                    warningReceipt.textContent = '';
+                }
+            } else {
+                warningsContainer.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Erro ao processar faturas.json:', error);
+        }
+    }
+
+
+    function resetDados() {
+            fetch('http://localhost:3000/reset', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao resetar os dados.');
+                }
+                return response.json();
+            })
+            .then(() => {
+                hideResetPopup();
+                showSuccessPopup();
+            })
+            .catch(error => {
+                console.error('Erro ao resetar os dados:', error);
+            });
+        }
+    
+    function renderTable(filteredFaturas = faturas) {
+        const tableBody = document.getElementById('table-body');
+        tableBody.innerHTML = '';
+
+        const totalRecords = filteredFaturas.length;
+        const startIndex = (currentPage - 1) * recordsPerPage;
+        const endIndex = Math.min(startIndex + recordsPerPage, totalRecords);
+        const paginatedFaturas = filteredFaturas.slice(startIndex, endIndex);
+
+        paginatedFaturas.forEach((fatura, index) => {
+            const row = document.createElement('tr');
+            const globalIndex = faturas.findIndex(f => f.numero === fatura.numero);
+
+            let setorContent;
+            if (fatura.situacao === "Pendente Classificação") {
+                setorContent = `
+                    <div class="dropdown">
+                        <button class="dropdown-button">Selecionar Setor</button>
+                        <ul class="dropdown-options">
+                            <li onclick="classificarFatura('Despesas Gerais', ${globalIndex})">
+                                <span class="setor-indicador setor-despesas-gerais"></span>Despesas Gerais
+                            </li>
+                            <li onclick="classificarFatura('Saúde', ${globalIndex})">
+                                <span class="setor-indicador setor-saúde"></span>Saúde
+                            </li>
+                            <li onclick="classificarFatura('Habitação', ${globalIndex})">
+                                <span class="setor-indicador setor-habitação"></span>Habitação
+                            </li>
+                            <li onclick="classificarFatura('Educação', ${globalIndex})">
+                                <span class="setor-indicador setor-educação"></span>Educação
+                            </li>
+                            <li onclick="classificarFatura('Ginásios', ${globalIndex})">
+                                <span class="setor-indicador setor-ginásios"></span>Ginásios
+                            </li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                const setorClass = `setor-${fatura.setor?.toLowerCase().replace(/ /g, '-') || 'default'}`;
+                setorContent = `
+                    <span class="setor-indicador ${setorClass}"></span>
+                    ${fatura.setor || "Não definido"}
+                `;
+            }
+
+            const actionButton = fatura.situacao === "Pendente Receita"
+                ? `<button class="action-button" onclick="associarReceita(${globalIndex})">Associar Receita</button>`
+                : `<button class="action-button">Alterar</button>`;
+
+            row.innerHTML = `
+                <td>${setorContent}</td>
+                <td>${fatura.nif}</td>
+                <td>${fatura.nome}</td>
+                <td>${fatura.numero}</td>
+                <td>${fatura.data}</td>
+                <td>${fatura.total}</td>
+                <td><span class="status ${fatura.situacao?.toLowerCase().replace(' ', '-')}">${fatura.situacao || "Indefinida"}</span></td>
+                <td>${actionButton}</td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+
+        updatePaginationInfo(filteredFaturas.length);
+        updatePaginationControls(filteredFaturas.length);
+
+        const clearFiltersButton = document.getElementById('clear-filters-btn');
+        clearFiltersButton.style.display = filtroAtual ? 'inline-block' : 'none';
+    }
+
+    function updatePaginationInfo(totalRecords) {
+        const startIndex = (currentPage - 1) * recordsPerPage + 1;
+        const endIndex = Math.min(startIndex + recordsPerPage - 1, totalRecords);
+
+        const paginationInfo = document.getElementById('pagination-info');
+        paginationInfo.textContent = `A mostrar ${startIndex} a ${endIndex} de ${totalRecords} faturas.`;
+    }
+
+    function updatePaginationControls(totalRecords) {
+        const totalPages = Math.ceil(totalRecords / recordsPerPage);
+
+        const prevButton = document.querySelector('.pagination-controls button:nth-child(1)');
+        const nextButton = document.querySelector('.pagination-controls button:nth-child(2)');
+
+        prevButton.disabled = currentPage === 1;
+        nextButton.disabled = currentPage === totalPages;
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            applyFilters();
+        }
+    }
+
+    function nextPage() {
+        const totalRecords = faturas.length;
+        if (currentPage < Math.ceil(totalRecords / recordsPerPage)) {
+            currentPage++;
+            applyFilters();
+        }
+    }
+    
+    // Chama a função ao carregar a página
+    verificarAvisos();
+	</script>
+
+</body>
+</html>
