@@ -231,6 +231,11 @@
             border: 1px solid #b8daff; /* Borda azul */
         }
 
+        .valor-receita-disabled {
+            background-color: #f5f5f5;
+            color: #aaa;
+            pointer-events: none;
+        }
 
     </style>
 </head>
@@ -319,7 +324,7 @@
         <table id="receita-associada" style="display: none;">
             <thead>
                 <tr>
-                    <th>Receita</th>
+                    <th>Associação de Receita</th>
                     <th>Valor Receita</th>
                 </tr>
             </thead>
@@ -332,7 +337,7 @@
                         </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" id="valor-receita" placeholder="0,00" disabled />
+                        <input type="text" class="form-control valor-receita-disabled" id="valor-receita" placeholder="0,00" disabled />
                     </td>
                 </tr>
             </tbody>
@@ -342,6 +347,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             carregarDetalhesFatura();
+            configurarCampoReceita();
         });
 
         document.getElementById('menu-toggle').addEventListener('click', function () {
@@ -495,9 +501,11 @@
 
         function salvarReceita(fatura) {
             const novaReceita = document.getElementById('receita').value;
-            const novoValorReceita = document.getElementById('valor-receita').value;
+            let novoValorReceita = document.getElementById('valor-receita').value;
 
-            if (!novoValorReceita) {
+            if (novaReceita === 'não') {
+                novoValorReceita = '0,00';
+            } else if (!novoValorReceita) {
                 alert('Por favor, insira o valor da receita.');
                 return;
             }
@@ -516,41 +524,26 @@
                 },
                 body: JSON.stringify(dadosAtualizados),
             })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(`Erro ao salvar a fatura: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then((faturaAtualizada) => {
-                    alert('Receita gravada com sucesso!');
-                    console.log('Fatura atualizada:', faturaAtualizada);
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao salvar a receita.');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Remove o parâmetro editReceita do URL
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.delete('editReceita');
+                const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+                window.history.replaceState({}, '', newUrl);
 
-
-
-                    // Atualiza os valores no DOM
-                    document.getElementById('receita').value = faturaAtualizada.receita.toLowerCase();
-                    document.getElementById('valor-receita').value = faturaAtualizada.valorreceita;
-
-                    // Atualiza a situação no DOM
-                    const situacaoElement = document.getElementById('situacao');
-                    if (situacaoElement) {
-                        situacaoElement.innerText = faturaAtualizada.situacao;
-                    }
-
-                    // Remove o parâmetro editReceita do URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    urlParams.delete('editReceita');
-                    const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
-                    window.history.replaceState({}, '', newUrl);
-
-                    // Faz o refresh da página
-                    location.reload();
-                })
-                .catch((error) => {
-                    console.error('Erro ao salvar a receita:', error);
-                    alert(`Erro ao salvar a receita: ${error.message || error}. Por favor, tente novamente.`);
-                });
+                // Faz o refresh da página
+                location.reload();
+            })
+            .catch((error) => {
+                console.error('Erro ao salvar a receita:', error);
+                alert(`Erro ao salvar a receita: ${error.message || error}. Por favor, tente novamente.`);
+            });
         }
 
 
@@ -561,6 +554,27 @@
             window.location.href = `faturas.html?filtroSituacao=${encodeURIComponent(filtroSituacao)}`;
         } else {
             window.history.back();
+        }
+    }
+
+    function configurarCampoReceita() {
+        const receitaField = document.getElementById('receita');
+        const valorReceitaField = document.getElementById('valor-receita');
+
+        receitaField.addEventListener('change', () => {
+            if (receitaField.value === 'sim') {
+                valorReceitaField.classList.remove('valor-receita-disabled');
+                valorReceitaField.disabled = false;
+            } else {
+                valorReceitaField.classList.add('valor-receita-disabled');
+                valorReceitaField.disabled = true;
+            }
+        });
+
+        // Inicialmente aplica a classe valor-receita-disabled se Receita não for "Sim"
+        if (receitaField.value !== 'sim') {
+            valorReceitaField.classList.add('valor-receita-disabled');
+            valorReceitaField.disabled = true;
         }
     }
     </script>
