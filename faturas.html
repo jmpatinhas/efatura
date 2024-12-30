@@ -657,7 +657,7 @@
 			const urlParams = new URLSearchParams(window.location.search);
 			const filtroSituacao = urlParams.get('filtroSituacao') ? JSON.parse(urlParams.get('filtroSituacao')) : null;
 
-			fetch('http://localhost:3000/faturas')
+			fetch('https://efatura.onrender.com/faturas')
 				.then(response => {
 					if (!response.ok) {
 						throw new Error('Erro ao carregar faturas.');
@@ -683,7 +683,7 @@
 				
 		function atualizarFatura(numeroFatura, novaFatura) {
 			const encodedNumero = encodeURIComponent(numeroFatura); // Codifica caracteres especiais
-			fetch(`http://localhost:3000/faturas/${encodedNumero}`, {
+			fetch(`https://efatura.onrender.com/faturas/${encodedNumero}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(novaFatura)
@@ -1036,7 +1036,7 @@ function consultarFatura(numeroFatura) {
 
 
         function resetDados() {
-            fetch('http://localhost:3000/reset', {
+            fetch('https://efatura.onrender.com/reset', {
                 method: 'POST'
             })
             .then(response => {

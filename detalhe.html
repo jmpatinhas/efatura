@@ -508,7 +508,7 @@
                 situacao: "Registado",
             };
 
-            fetch(`http://localhost:3000/faturas/atualizar-campos/${encodeURIComponent(fatura.numero)}`, {
+            fetch(`https://efatura.onrender.com/faturas/atualizar-campos/${encodeURIComponent(fatura.numero)}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
