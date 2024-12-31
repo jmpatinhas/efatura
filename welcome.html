@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-Fatura - Página Inicial</title>
+    <link rel="icon" href="icon.png" type="image/png">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            width: 100%;
+            background-color: #d3d3d3;
+            color: black;
+            padding: 10px 20px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            position: absolute;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .loading-container {
+            text-align: center;
+            margin-top: 100px; /* Ajuste para compensar a barra superior */
+        }
+
+        .loading-wheel {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="logo.png" alt="Logo e-Fatura">
+        </div>
+        <h1>e-Fatura</h1>
+    </header>
+
+    <div class="loading-container">
+        <div class="loading-wheel"></div>
+        <div class="loading-text">Inicializando o backend, esta operação demorará menos de um minuto, por favor aguarde...</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('https://efatura.onrender.com/reset', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao restabelecer os dados.');
+                }
+                return response.json();
+            })
+            .then(() => {
+                window.location.href = 'index.html'; // Redireciona para a página principal após a reposição dos dados
+            })
+            .catch(error => {
+                console.error('Erro ao restabelecer os dados:', error);
+                document.querySelector('.loading-text').innerText = 'Erro ao iniciar o backend. Por favor, tente novamente.';
+            });
+        });
+    </script>
+</body>
+</html>
