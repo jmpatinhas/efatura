@@ -247,6 +247,34 @@
             background-color: #f5f5f5;
             color: black;
         }
+
+        .situacao-registado {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 5px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .situacao-pendente-classificacao {
+            background-color: #ffe5b4;
+            color: #cc7a00;
+            border: 1px solid #ffaa00;
+            padding: 5px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .situacao-pendente-receita {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+            padding: 5px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
     </style>
 </head>
 <body>
@@ -292,16 +320,18 @@
             <tr>
                 <th>Setor de Atividade</th>
                 <td id="setor">
-                    <span class="setor-indicador setor-despesas-gerais"></span>
+                    <span class="setor-indicador setor-default"></span>
                     <span id="setor-texto">Indefinido</span>
                 </td>
             </tr>
             <tr>
                 <th>Situação</th>
-                <td id="situacao">Indefinido</td>
+                <td id="situacao-container">
+                    <div class="situacao">
+                        <span id="situacao-status" class="situacao-registado">Indefinido</span>
+                    </div>
                 </td>
             </tr>            
-            
         </table>
 
         <h2>Detalhes Fiscais</h2>
@@ -407,7 +437,37 @@
         }
 
 
-        function preencherDetalhes(fatura, editReceita) {
+        function preencherDetalhes(fatura) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const editReceita = urlParams.get('editReceita') === 'true';
+            if (!fatura) {
+                console.error("Fatura não foi carregada corretamente.");
+                return;
+            }
+
+            // Seleciona o span que exibe a situação
+            const situacaoStatus = document.getElementById('situacao-status');
+            if (!situacaoStatus) {
+                console.error("Elemento 'situacao-status' não encontrado.");
+                return;
+            }
+
+            // Atualiza o texto da situação
+            situacaoStatus.innerText = fatura.situacao || 'Indefinido';
+
+            // Remove todas as classes previamente aplicadas
+            situacaoStatus.className = '';
+
+            // Adiciona a classe apropriada conforme a situação
+            if (fatura.situacao === 'Registado') {
+                situacaoStatus.classList.add('situacao-registado');
+            } else if (fatura.situacao === 'Pendente Classificação') {
+                situacaoStatus.classList.add('situacao-pendente-classificacao');
+            } else if (fatura.situacao === 'Pendente Receita') {
+                situacaoStatus.classList.add('situacao-pendente-receita');
+            } else {
+                situacaoStatus.classList.add('situacao-default'); // Classe padrão (se necessário)
+            }
             // Campos básicos
             document.getElementById('numero').innerText = fatura.numero;
             document.getElementById('nif').innerText = fatura.nif;
@@ -417,7 +477,7 @@
             document.getElementById('taxa').innerText = fatura.taxa;
             document.getElementById('numero-certificado').innerText = fatura.numeroCertificado || 'NA';
             document.getElementById('regiao-imposto').innerText = fatura.regiaoImposto || 'NA';
-            document.getElementById('situacao').innerText = fatura.situacao || 'Indefinido';
+            document.getElementById('situacao-status').innerText = fatura.situacao || 'Indefinido';
                     
             // Cálculo de IVA e Base Tributável
             const total = parseFloat(fatura.total.replace(',', '.')) || 0;
